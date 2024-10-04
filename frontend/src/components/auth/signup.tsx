@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { toast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { authApis } from "@/lib/apis"
 
 export default function Signup() {
   const [name, setName] = useState("")
@@ -18,7 +19,7 @@ export default function Signup() {
     if (name && email && password) {
       try {
         // Simulate an API call
-        await axios.post('http://localhost:5000/api/v1/signup', {
+        await axios.post(authApis.signup, {
           name, email, password
         })
 
