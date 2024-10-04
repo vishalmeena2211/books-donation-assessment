@@ -1,8 +1,8 @@
 const baseUrl = 'https://books-donation-assessment.onrender.com';
 
 export const authApis = {
-    login: `${baseUrl}/api/v1/auth/login`,
-    signup: `${baseUrl}/api/v1/auth/register`,
+    login: `${baseUrl}/api/v1/login`,
+    signup: `${baseUrl}/api/v1/signup`,
 };
 
 export const userApis = {
