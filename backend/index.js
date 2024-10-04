@@ -9,8 +9,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://book-donation-assessment.netlify.app',
-    // credentials: true
+    origin: process.env.ORIGIN || 'https://book-donation-assessment.netlify.app',
 }));
 
 connectDB();
