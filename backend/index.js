@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'hhttps://book-donation-assessment.netlify.app',
+    origin: 'https://book-donation-assessment.netlify.app',
     // credentials: true
 }));
 
