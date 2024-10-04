@@ -1,28 +1,25 @@
-import { useState } from "react"
-import Navbar from "./components/Navbar"
-import HeroSection from "./components/hero-section"
-import InfoSection from "./components/info-section"
-import NewsletterSection from "./components/news-latter-section"
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./pages/home-page";
+import Navbar from "./components/navbar";
+import Footer from "./components/footer";
+import PrivateRoute from "./components/auth/private-route";
+import DonationFormPage from "./pages/donation-form-page";
+import PublicRoute from "./components/auth/public-route";
+import LoginPage from "./pages/login-page";
+import SignupPage from "./pages/signup-page";
 
 function App() {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-  const handleLogin = () => setIsLoggedIn(true)
-  const handleLogout = () => setIsLoggedIn(false)
-
   return (
     <>
-      {/* <BookDonationForm/> */}
-      <div className="flex flex-col min-h-screen">
-        <Navbar isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
-        <main className="flex-grow container mx-auto px-4 py-8">
-          <HeroSection />
-          <InfoSection />
-          <NewsletterSection />
-        </main>
-        <footer />
-      </div>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><DonationFormPage /></PrivateRoute>} />
+      </Routes>
+      <Footer />
     </>
   )
 }

@@ -7,7 +7,6 @@ const userModel = mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true
     },
     email: {
         type: String,
@@ -15,6 +14,7 @@ const userModel = mongoose.Schema({
     },
     password: {
         type: String,
+        required: true
     },
     books: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -24,4 +24,4 @@ const userModel = mongoose.Schema({
 
 const User = mongoose.model('User', userModel);
 
-export default User;
+module.exports = User;

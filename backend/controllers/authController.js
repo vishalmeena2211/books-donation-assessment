@@ -1,5 +1,5 @@
 require('dotenv').config();
-const User = require('../models/User');
+const User = require('../models/userModel');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -30,7 +30,7 @@ exports.signUp = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "data Saved successfully",
-            data: savedData
+            data: savedData,
 
         });
 
@@ -59,18 +59,21 @@ exports.login = async (req, res) => {
         if (checkPassword) {
 
             const payload = {
+                id: isUser._id,
                 email: isUser.email,
-                id: isUser._id
+                name: isUser.name,
+                phone: isUser.phone
             }
-            const token = jwt.sign(payload, process.env.JWT, { expiresIn: "30d" });
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "30d" });
             isUser = isUser.toObject()
             isUser.token = token;
             isUser.password = undefined;
             console.log("login sucessfully");
-            return res.cookie("UserToken", token, { expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), httpOnly: true }).status(200).json({
+            return res.cookie("token", token, { expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), httpOnly: true }).status(200).json({
                 success: true,
                 message: "login successfull",
-                data: isUser
+                data: isUser,
+                token
             })
         } else {
             return res.status(401).json({

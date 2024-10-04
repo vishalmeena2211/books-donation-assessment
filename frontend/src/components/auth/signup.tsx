@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,8 +5,9 @@ import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { toast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
-export default function SignupPage() {
+export default function Signup() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -16,15 +15,26 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically make an API call to create a new user account
-    // For this example, we'll just simulate a successful signup
     if (name && email && password) {
-      toast({
-        title: "Signup Successful",
-        description: "Your account has been created. Welcome!",
-      })
-      // Redirect to the book donation form page or a welcome page
-      navigate("/donate")
+      try {
+        // Simulate an API call
+        await axios.post('http://localhost:5000/api/v1/signup', {
+          name, email, password
+        })
+
+        toast({
+          title: "Signup Successful",
+          description: "Your account has been created. Now Login!",
+        })
+        // Redirect to the book donation form page or a welcome page
+        navigate("/login")
+      } catch {
+        toast({
+          title: "Signup Failed",
+          description: "An error occurred during signup. Please try again.",
+          variant: "destructive",
+        })
+      }
     } else {
       toast({
         title: "Signup Failed",

@@ -1,37 +1,42 @@
-"use client"
-
-import { useState } from "react"
+import { useState, FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { toast } from "@/hooks/use-toast"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux";
+import { login } from "@/redux/Slices/authSlice"
+import { setUser } from "@/redux/Slices/profileSlice"
+import axios from "axios"
 
 export default function Login() {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically make an API call to authenticate the user
-    // For this example, we'll just simulate a successful login
-    if (email && password) {
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-      })
-      // Redirect to the book donation form page
-      navigate("/donate")
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Please enter both email and password.",
-        variant: "destructive",
-      })
+  const handleSubmit = async (e: FormEvent) => {
+    setLoading(true);
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:5000/api/v1/login', {
+        email, password
+      });
+      const userToken = res?.data?.token;
+      const userData = res?.data?.data;
+      localStorage.setItem('token', userToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+      dispatch(login(userToken));
+      dispatch(setUser(userData));
+      setLoading(false);
+      if (res.status === 200) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error)
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-md h-screen flex items-center justify-center">
@@ -66,7 +71,7 @@ export default function Login() {
               />
             </div>
             <Button type="submit" className="w-full">
-              Login
+              {loading ? "Signing In ..." : "Login"}
             </Button>
           </form>
         </CardContent>

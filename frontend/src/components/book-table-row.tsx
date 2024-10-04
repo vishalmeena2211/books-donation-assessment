@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef, useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -51,9 +49,6 @@ export function BookTableRow({
         const newErrors: { [key in keyof BookEntry]?: string } = {}
         if (!editedBook.title) newErrors.title = "Title is required"
         if (!editedBook.author) newErrors.author = "Author is required"
-        if (!editedBook.genre) newErrors.genre = "Genre is required"
-        if (!editedBook.year) newErrors.year = "Year is required"
-        if (!editedBook.isbn) newErrors.isbn = "ISBN is required"
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
@@ -113,26 +108,26 @@ export function BookTableRow({
                 {isEditing ? (
                     <>
                         <Input
-                            value={editedBook.year}
-                            onChange={(e) => handleChange("year", e.target.value)}
+                            value={editedBook.year_of_publication}
+                            onChange={(e) => handleChange("year_of_publication", e.target.value)}
                         />
-                        {errors.year && <span className="text-red-500">{errors.year}</span>}
+                        {errors.year_of_publication && <span className="text-red-500">{errors.year_of_publication}</span>}
                     </>
                 ) : (
-                    book.year
+                    book.year_of_publication
                 )}
             </TableCell>
             <TableCell className="border-r p-2 text-center">
                 {isEditing ? (
                     <>
                         <Input
-                            value={editedBook.isbn}
-                            onChange={(e) => handleChange("isbn", e.target.value)}
+                            value={editedBook.ISBN}
+                            onChange={(e) => handleChange("ISBN", e.target.value)}
                         />
-                        {errors.isbn && <span className="text-red-500">{errors.isbn}</span>}
+                        {errors.ISBN && <span className="text-red-500">{errors.ISBN}</span>}
                     </>
                 ) : (
-                    book.isbn
+                    book.ISBN
                 )}
             </TableCell>
             <TableCell className="p-2 text-center">

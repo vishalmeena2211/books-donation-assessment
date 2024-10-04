@@ -1,56 +1,144 @@
-"use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import { BookEntry } from "@/lib/types"
-import { BookTableRow } from "./book-table-row"
+} from "@/components/ui/table";
+import { BookEntry, FormState } from "@/lib/types";
+import { BookTableRow } from "./book-table-row";
+import { bookApis, userApis } from "@/lib/apis"; // Adjust the import path as necessary
+import { toast } from "@/hooks/use-toast"; // Import the toast component
 
 interface BookTableProps {
-    books: BookEntry[]
-    onAddBook: (book: BookEntry) => void
-    onUpdateBook: (book: BookEntry) => void
-    onDeleteBook: (id: number) => void
-    onReorderBooks: (books: BookEntry[]) => void
-    validateForm: () => boolean
+    books: BookEntry[];
+    setFormState: (value: React.SetStateAction<FormState>) => void;
+    validateForm: () => boolean;
 }
 
 export function BookTable({
     books,
-    onAddBook,
-    onUpdateBook,
-    onDeleteBook,
-    onReorderBooks,
+    setFormState,
     validateForm
 }: BookTableProps) {
-    const [editingId, setEditingId] = useState<number | null>(null)
+    const [editingId, setEditingId] = useState<string | null>(null);
 
-    const handleAddBook = () => {
+    // Function to handle adding a new book
+    const handleAddBook = async () => {
         if (validateForm()) {
-            const newBook: BookEntry = { id: Date.now(), title: "", author: "", genre: "", year: "", isbn: "" }
-            onAddBook(newBook)
-            setEditingId(newBook.id)
+            const newBook: BookEntry = { _id: Date.now().toString(), title: "", author: "", genre: "", year_of_publication: "", ISBN: "" };
+            try {
+                const response = await axios.post(bookApis.createBook, newBook, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+                const addedBook = response.data;
+                setFormState(prev => ({ ...prev, books: [addedBook, ...prev.books] }));
+                setEditingId(addedBook._id);
+                toast({
+                    title: "Success",
+                    description: "Book added successfully.",
+                });
+            } catch (error) {
+                console.error("Error adding book:", error);
+                toast({
+                    title: "Error",
+                    description: "Failed to add book.",
+                    variant: "destructive",
+                });
+            }
+        } else {
+            // Show validation error toast
+            toast({
+                title: "Validation Error",
+                description: "Please fill in all required fields correctly.",
+                variant: "destructive",
+            });
         }
-    }
+    };
 
-    const handleSave = (updatedBook: BookEntry) => {
-        onUpdateBook(updatedBook)
-        setEditingId(null)
-    }
+    // Function to handle saving an updated book
+    const handleSave = async (updatedBook: BookEntry) => {
+        try {
+            const res = await axios.put(bookApis.updateBook(updatedBook._id), updatedBook, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
 
-    const handleMoveToFirst = (bookId: number) => {
-        const bookToMove = books.find(book => book.id === bookId)
-        if (bookToMove) {
-            const newBooks = [bookToMove, ...books.filter(book => book.id !== bookId)]
-            onReorderBooks(newBooks)
+            const newUpdatedBook: BookEntry = res.data;
+            setFormState(prev => ({ ...prev, books: books.map(book => book._id === newUpdatedBook._id ? newUpdatedBook : book) }));
+            setEditingId(null);
+            toast({
+                title: "Success",
+                description: "Book updated successfully.",
+            });
+        } catch (error) {
+            console.error("Error saving book:", error);
+            toast({
+                title: "Error",
+                description: "Failed to update book.",
+                variant: "destructive",
+            });
         }
-    }
+    };
+
+    // Function to handle deleting a book
+    const handleDelete = async (id: string) => {
+        try {
+            await axios.delete(bookApis.deleteBook(id), {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setFormState(prev => ({ ...prev, books: books.filter(book => book._id !== id) }));
+            toast({
+                title: "Success",
+                description: "Book deleted successfully.",
+            });
+        } catch (error) {
+            console.error("Error deleting book:", error);
+            toast({
+                title: "Error",
+                description: "Failed to delete book.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    // Function to handle moving a book to the first position
+    const handleMoveToFirst = async (bookId: string) => {
+        try {
+            await axios.get(bookApis.reorderBooks(bookId), {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            const res = await axios.get(userApis.getUserById, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            setFormState(prev => ({ ...prev, books: res.data.books }));
+            toast({
+                title: "Success",
+                description: "Book moved to the first position successfully.",
+            });
+        } catch (error) {
+            console.error("Error reordering books:", error);
+            toast({
+                title: "Error",
+                description: "Failed to reorder books.",
+                variant: "destructive",
+            });
+        }
+    };
 
     return (
         <>
@@ -71,14 +159,14 @@ export function BookTable({
                     <TableBody>
                         {books.map((book, index) => (
                             <BookTableRow
-                                key={book.id}
+                                key={book._id}
                                 srNo={index + 1}
                                 book={book}
-                                isEditing={editingId === book.id}
-                                onEdit={() => setEditingId(book.id)}
+                                isEditing={editingId === book._id}
+                                onEdit={() => setEditingId(book._id)}
                                 onSave={handleSave}
-                                onDelete={() => onDeleteBook(book.id)}
-                                onMoveToFirst={() => handleMoveToFirst(book.id)}
+                                onDelete={() => handleDelete(book._id)}
+                                onMoveToFirst={() => handleMoveToFirst(book._id)}
                                 isFirstRow={index === 0}
                             />
                         ))}
@@ -86,5 +174,5 @@ export function BookTable({
                 </Table>
             </div>
         </>
-    )
+    );
 }

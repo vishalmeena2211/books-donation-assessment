@@ -1,9 +1,9 @@
 import BookDonationForm from "@/components/book-danation-form"
 
-const DonationFormPage = ()=>{
-    return(
+const DonationFormPage = () => {
+    return (
         <>
-        <BookDonationForm/>
+            <BookDonationForm />
         </>
     )
 }

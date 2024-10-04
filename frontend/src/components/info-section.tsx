@@ -8,19 +8,19 @@ export default function InfoSection() {
         <ul className="space-y-2">
           <li className="flex items-center">
             <BookOpen className="h-5 w-5 mr-2 text-primary" />
-            Promote literacy in your community
+            Help others read
           </li>
           <li className="flex items-center">
             <BookOpen className="h-5 w-5 mr-2 text-primary" />
-            Give books a second life
+            Reuse books
           </li>
           <li className="flex items-center">
             <BookOpen className="h-5 w-5 mr-2 text-primary" />
-            Help those who can't afford new books
+            Support those in need
           </li>
           <li className="flex items-center">
             <BookOpen className="h-5 w-5 mr-2 text-primary" />
-            Clear space on your bookshelves
+            Free up space
           </li>
         </ul>
       </div>
@@ -29,19 +29,19 @@ export default function InfoSection() {
         <ol className="space-y-2">
           <li className="flex items-center">
             <span className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center mr-2">1</span>
-            Sign up for an account
+            Sign up
           </li>
           <li className="flex items-center">
             <span className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center mr-2">2</span>
-            List the books you want to donate
+            List books
           </li>
           <li className="flex items-center">
             <span className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center mr-2">3</span>
-            Connect with local readers
+            Connect
           </li>
           <li className="flex items-center">
             <span className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center mr-2">4</span>
-            Arrange a meetup to share your books
+            Share books
           </li>
         </ol>
       </div>

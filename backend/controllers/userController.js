@@ -13,7 +13,7 @@ exports.getUsers = async (req, res) => {
 // Get a user by ID
 exports.getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).populate('books');
+        const user = await User.findById(req.user.id).populate('books');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -26,15 +26,16 @@ exports.getUserById = async (req, res) => {
 // Update a user by ID
 exports.updateUserById = async (req, res) => {
     try {
-        const { name, phone, email, password } = req.body;
+        const { name, phone } = req.body;
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            { name, phone, email, password },
+            req.user.id,
+            { name, phone },
             { new: true }
         );
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
+        updatedUser.password = undefined;
         res.status(200).json(updatedUser);
     } catch (error) {
         res.status(400).json({ message: error.message });
