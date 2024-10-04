@@ -1,6 +1,5 @@
 const express = require('express');
 const { connectDB } = require('./config/db');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 require('dotenv').config();
 const router = require('./routes/route');
@@ -8,10 +7,9 @@ const router = require('./routes/route');
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser());
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'hhttps://book-donation-assessment.netlify.app',
     // credentials: true
 }));
 

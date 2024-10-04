@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:5000';
+const baseUrl = 'https://books-donation-assessment.onrender.com';
 
 export const authApis = {
     login: `${baseUrl}/api/v1/auth/login`,
