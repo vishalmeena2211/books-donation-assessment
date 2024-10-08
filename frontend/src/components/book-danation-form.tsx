@@ -8,7 +8,7 @@ import { FormState } from "@/lib/types"
 import { useSelector } from "react-redux"
 import axios from "axios"
 import { RootState } from "@/redux/Store"
-import { userApis } from "@/lib/apis" 
+import { userApis } from "@/lib/apis"
 
 export default function BookDonationForm() {
 
@@ -20,6 +20,7 @@ export default function BookDonationForm() {
         email: user?.email ?? "",
         books: [],
     })
+    
 
     useEffect(() => {
         // Fetch initial data from the API
@@ -82,7 +83,7 @@ export default function BookDonationForm() {
                     Save Data
                 </Button>
             </div>
-            <DonorInfoForm />
+            <DonorInfoForm setFormState={setFormState} />
             <BookTable
                 books={formState.books}
                 setFormState={setFormState}
