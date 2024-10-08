@@ -9,8 +9,8 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    // origin: 'https://book-donation-assessment.netlify.app',
-    origin: 'http://localhost:5173',
+    origin: 'https://book-donation-assessment.netlify.app',
+    // origin: 'http://localhost:5173',
 
 }));
 
