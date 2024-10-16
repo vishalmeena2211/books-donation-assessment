@@ -20,7 +20,7 @@ export default function BookDonationForm() {
         email: user?.email ?? "",
         books: [],
     })
-    
+
 
     useEffect(() => {
         // Fetch initial data from the API
@@ -78,9 +78,6 @@ export default function BookDonationForm() {
                 <Button onClick={dumpStateAsJson} variant="outline">
                     <Download className="mr-2 h-4 w-4" />
                     Download State
-                </Button>
-                <Button variant="outline" className="ml-2">
-                    Save Data
                 </Button>
             </div>
             <DonorInfoForm setFormState={setFormState} />

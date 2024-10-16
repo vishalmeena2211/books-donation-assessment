@@ -15,9 +15,10 @@ import { z } from "zod";
 export function DonorInfoForm({ setFormState }: { setFormState: React.Dispatch<React.SetStateAction<FormState>> }) {
   const { user } = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch();
-  const [error, setError] = useState<{ phone: string; email: string }>({
+  const [error, setError] = useState<{ phone: string; email: string; name: string }>({
     phone: "",
-    email: ""
+    email: "",
+    name: ""
   });
 
   const [formData, setFormData] = useState<User>({
@@ -30,30 +31,32 @@ export function DonorInfoForm({ setFormState }: { setFormState: React.Dispatch<R
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const isValidatePhone = (phone: string): boolean => {
-    for (let i = 0; i < phone.length; i++) {
-      if (phone[i] < "0" || phone[i] > "9") {
-        setError((prev) => ({ ...prev, phone: "Please enter correct number" }));
-
-        setTimeout(() => {
-          setError((prev) => ({ ...prev, phone: "" }));
-        }, 4000);
-
-        return false;
-      }
+  const validateName = (name: string): boolean => {
+    if (name.trim() === "") {
+      setError((prev) => ({ ...prev, name: "Name cannot be empty" }));
+      toast({ title: "Validation Error", description: "Name cannot be empty" });
+      return false;
     }
     return true;
   };
 
-  const isValidateEmail = (email: string): boolean => {
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[0-9]+$/;
+    if (!phoneRegex.test(phone)) {
+      setError((prev) => ({ ...prev, phone: "Please enter a valid phone number" }));
+      setTimeout(() => setError((prev) => ({ ...prev, phone: "" })), 3000); // Clear the error message after 3 seconds
+      toast({ title: "Validation Error", description: "Please enter a valid phone number" });
+      return false;
+    }
+    return true;
+  };
+
+  const validateEmail = (email: string): boolean => {
     const emailSchema = z.string().email();
     if (!emailSchema.safeParse(email).success) {
-      setError((prev) => ({ ...prev, email: "Please enter correct email" }));
-
-      setTimeout(() => {
-        setError((prev) => ({ ...prev, email: "" }));
-      }, 4000);
-
+      setError((prev) => ({ ...prev, email: "Please enter a valid email" }));
+      setTimeout(() => setError((prev) => ({ ...prev, email: "" })), 3000); // Clear the error message after 3 seconds
+      toast({ title: "Validation Error", description: "Please enter a valid email" });
       return false;
     }
     return true;
@@ -61,18 +64,11 @@ export function DonorInfoForm({ setFormState }: { setFormState: React.Dispatch<R
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateName(formData.name) || !validatePhone(formData.phone) || !validateEmail(formData.email)) {
+      return;
+    }
+
     try {
-      if (!isValidatePhone(formData.phone)) {
-        toast({
-          title: "Please enter correct number"
-        });
-        return;
-      }
-
-      if (!isValidateEmail(formData.email)) {
-        return;
-      }
-
       const res = await axios.put(
         userApis.updateUserById,
         {
@@ -119,6 +115,7 @@ export function DonorInfoForm({ setFormState }: { setFormState: React.Dispatch<R
           value={formData.name}
           onChange={(e) => handleChange("name", e.target.value)}
         />
+        {error.name && <span>{error.name}</span>}
       </div>
       <div className="flex flex-col">
         <Label htmlFor="phone" className="mb-2">Phone</Label>
